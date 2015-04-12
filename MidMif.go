@@ -32,10 +32,12 @@ func (m *MidMif) WriteToFile() {
 	}
 	defer mid.Close()
 
-	mif.WriteString(m.Mif.Head.String())
+	mifWCount, _ := mif.WriteString(m.Mif.Head.String())
 	midWCount := 0
 
 	for i := 0; i < len(m.Datas); i++ {
+		var midLength int
+		var mifLength int
 		data := m.Datas[i]
 		wdata := make([]interface{}, m.Mif.Head.columnNumber, 10)
 		for field, value := range data.Row {
@@ -47,18 +49,22 @@ func (m *MidMif) WriteToFile() {
 		}
 
 		for i := 0; i < len(wdata); i++ {
-			var length int
 			switch wdata[i].(type) {
 			case string:
-				length, _ = mid.WriteAt([]byte(fmt.Sprintf("\"%v\""+m.Mif.Head.Delimiter, wdata[i])), int64(midWCount))
+				midLength, _ = mid.WriteAt([]byte(fmt.Sprintf("\"%v\""+m.Mif.Head.Delimiter, wdata[i])), int64(midWCount))
 			default:
-				length, _ = mid.WriteAt([]byte(fmt.Sprintf("%v"+m.Mif.Head.Delimiter, wdata[i])), int64(midWCount))
+				midLength, _ = mid.WriteAt([]byte(fmt.Sprintf("%v"+m.Mif.Head.Delimiter, wdata[i])), int64(midWCount))
 			}
-			midWCount += length
+			midWCount += midLength
 		}
-
 		length, _ := mid.WriteAt([]byte("\n"), int64(midWCount))
 		midWCount += length
+
+		mifLength, _ = mif.WriteAt([]byte(data.Geometry.MiString()), int64(mifWCount))
+		mifWCount += mifLength
+
+		mifLength, _ = mif.WriteAt([]byte(data.Graphic.MiString()), int64(mifWCount))
+		mifWCount += mifLength
 	}
 
 }
