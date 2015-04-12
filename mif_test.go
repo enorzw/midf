@@ -40,25 +40,7 @@ func TestOs(t *testing.T) {
 	m.Add("age", 10)
 	m.Add("name", true)
 	m.Add("class", 1.1)
-	// m.Row["feaid"] = "1"
-	// m.Row["age"] = "10"
-	// m.Row["name"] = "David"
-	// m.Row["class"] = "2"
-	midf.AddData(*m)
-	// m.Values = make(map[string]interface{})
-	// m.Values["feaid"] = "1"
-	// m.Values["age"] = "10"
-	// m.Values["name"] = "David"
-	// m.Values["class"] = "2"
-	// midf.AddData(m)
-
-	// m1 := MiData{}
-	// m1.Values = make(map[string]interface{})
-	// m1.Values["feaid"] = "1"
-	// m1.Values["age"] = "10"
-	// m1.Values["name"] = "David"
-	// m1.Values["class"] = "2"
-	// midf.AddData(m1)
+	midf.AddData(m)
 
 	midf.WriteToFile()
 }

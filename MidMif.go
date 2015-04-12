@@ -9,10 +9,10 @@ import (
 type MidMif struct {
 	Mif   *MifFile
 	Mid   *MidFile
-	Datas []MiData
+	Datas []*MiData
 }
 
-func (m *MidMif) AddData(data MiData) {
+func (m *MidMif) AddData(data *MiData) {
 	m.Datas = append(m.Datas, data)
 }
 

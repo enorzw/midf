@@ -16,7 +16,7 @@ func NewMidMif(fullpath string) MidMif {
 	//dir, fname := path.Split(fullpath)
 	midMif.Mif, _ = NewMifFile(fullpath + ".mif")
 	midMif.Mid, _ = NewMidFile(fullpath + ".mid")
-	midMif.Datas = make([]MiData, 0, 100)
+	midMif.Datas = make([]*MiData, 0, 100)
 	return midMif
 }
 
