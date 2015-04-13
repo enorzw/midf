@@ -1,8 +1,52 @@
 package midf
 
 import (
+	"errors"
 	"fmt"
+	"strconv"
+	"strings"
+	"unicode"
 )
+
+func ReadWkt(wkt string) (IMiGeometry, error) {
+	wkt = strings.Trim(wkt, STR_SPACE)
+	coodFilter := func(c rune) bool {
+		return !unicode.IsLetter(c) && !unicode.IsNumber(c) && c != '.'
+	}
+	fields := strings.FieldsFunc(wkt, coodFilter)
+	if strings.EqualFold(fields[0], "POINT") {
+		var x, y float64
+		var err error
+		x, err = strconv.ParseFloat(fields[1], 64)
+		if err != nil {
+			return EmptyGeometry{}, errors.New("WKT格式解析失败：" + wkt)
+		}
+		y, err = strconv.ParseFloat(fields[2], 64)
+		if err != nil {
+			return EmptyGeometry{}, errors.New("WKT格式解析失败：" + wkt)
+		}
+		return NewMiPoint(x, y), nil
+	} else if strings.EqualFold(fields[0], "LINESTRING") {
+		var x, y float64
+		var err error
+		var points []MiPoint = make([]MiPoint, 0, 10)
+		for i := 1; i < len(fields); i += 2 {
+			x, err = strconv.ParseFloat(fields[i], 64)
+			if err != nil {
+				return EmptyGeometry{}, errors.New("WKT格式解析失败：" + wkt)
+			}
+			y, err = strconv.ParseFloat(fields[i+1], 64)
+			if err != nil {
+				return EmptyGeometry{}, errors.New("WKT格式解析失败：" + wkt)
+			}
+			points = append(points, NewMiPoint(x, y))
+		}
+		return NewMiPolyline(points), nil
+	} else if strings.EqualFold(fields[0], "POLYGON") {
+
+	}
+	return EmptyGeometry{}, nil
+}
 
 type IMiGeometry interface {
 	GetGeoType() string
@@ -33,7 +77,7 @@ func (this MiPoint) GetGeoType() string {
 }
 
 func (this MiPoint) MiString() string {
-	return fmt.Sprintf("POINT %v %v", this.X, this.Y)
+	return fmt.Sprintf("POINT %v %v"+STR_NEWLINE, this.X, this.Y)
 }
 
 type MiLine struct {
@@ -52,7 +96,7 @@ func (this MiLine) GetGeoType() string {
 }
 
 func (this MiLine) MiString() string {
-	return fmt.Sprintf("LINE %v %v %v %v\n", this.X1, this.Y1, this.X2, this.Y2)
+	return fmt.Sprintf("LINE %v %v %v %v"+STR_NEWLINE, this.X1, this.Y1, this.X2, this.Y2)
 }
 
 type MiPolyline struct {

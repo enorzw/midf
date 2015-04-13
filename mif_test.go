@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"os"
 	//"path"
+	"strings"
 	"testing"
+	"unicode"
 )
 
 func TestConfig(t *testing.T) {
@@ -49,7 +51,6 @@ func TestOs(t *testing.T) {
 	m.Add("age", 15)
 	m.Add("name", "zhongwei")
 	m.Add("class", 1.12312)
-	m.Geometry = EmptyGeometry{}
 	midf.AddData(m)
 
 	m = NewMiData()
@@ -95,4 +96,20 @@ func TestOs(t *testing.T) {
 	file.Read(buf)
 	fmt.Println(string(buf))
 
+}
+
+func TestOmmm(t *testing.T) {
+
+	p, errs := ReadWkt("LINESTRING (30.23423 10.234, 10 30, 40 40)")
+
+	if errs != nil {
+		fmt.Println(errs)
+	}
+
+	fmt.Println(p.MiString())
+
+	f := func(c rune) bool {
+		return !unicode.IsLetter(c) && !unicode.IsNumber(c) && c != '.'
+	}
+	fmt.Printf("Fields are: %q", strings.FieldsFunc("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", f))
 }
