@@ -39,7 +39,7 @@ func (m *MidMif) WriteToFile() {
 		var midLength int
 		var mifLength int
 		data := m.Datas[i]
-		wdata := make([]interface{}, m.Mif.Head.columnNumber, 10)
+		wdata := make([]interface{}, m.Mif.Head.columnNumber, m.Mif.Head.columnNumber)
 		for field, value := range data.Row {
 			if index, ok := m.Mif.Head.columnNameMap[field]; ok {
 				wdata[index] = value
