@@ -27,6 +27,8 @@ const (
 // float
 // date
 // logical
+type ColunmType int
+
 const (
 	COLUMNTYPE_CHAR = iota
 	COLUMNTYPE_INTEGER
@@ -36,6 +38,16 @@ const (
 	COLUMNTYPE_DATE
 	COLUMNTYPE_LOGICAL
 )
+
+var COLUNMTYPE_MAP = map[int]string{
+	COLUMNTYPE_CHAR:     "Char",
+	COLUMNTYPE_INTEGER:  "Integer",
+	COLUMNTYPE_SMALLINT: "Smallint",
+	COLUMNTYPE_DECIMAL:  "Decimal",
+	COLUMNTYPE_FLOAT:    "Float",
+	COLUMNTYPE_DATE:     "Date",
+	COLUMNTYPE_LOGICAL:  "Logical",
+}
 
 type MifHead struct {
 	Version   int
@@ -62,6 +74,23 @@ func NewMifHead() MifHead {
 	head.columnType = make([]string, 0, 10)
 	head.columnNameMap = make(map[string]int)
 	return head
+}
+
+func (m *MifHead) AddColumnT(cname string, ctype ColunmType, cnum int) bool {
+	if _, ok := m.columnNameMap[cname]; ok {
+		return false
+	} else {
+		m.columnNameMap[cname] = m.columnNumber
+		m.columnNames = append(m.columnNames, cname)
+		if ctype == COLUMNTYPE_CHAR || ctype == COLUMNTYPE_DECIMAL {
+			str_type := fmt.Sprintf("%v(%v)", COLUNMTYPE_MAP[int(ctype)], cnum)
+			m.columnType = append(m.columnType, str_type)
+		} else {
+			m.columnType = append(m.columnType, COLUNMTYPE_MAP[int(ctype)])
+		}
+		m.columnNumber += 1
+	}
+	return true
 }
 
 func (m *MifHead) AddColumn(cname string, ctype string) bool {

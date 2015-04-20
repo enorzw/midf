@@ -33,51 +33,47 @@ func TestOs(t *testing.T) {
 
 	midf := NewMidMif("c")
 	midf.Mif.Head.Coordsys = "Earth Projection 1,0"
-	midf.Mif.Head.AddColumn("feaid", "char(13)")
-	midf.Mif.Head.AddColumn("age", "char(13)")
-	midf.Mif.Head.AddColumn("name", "char(13)")
-	midf.Mif.Head.AddColumn("class", "char(13)")
+	midf.AddColumn("feaid", "char(13)")
+	midf.AddColumn("age", "char(13)")
+	midf.AddColumn("name", "char(13)")
+	//midf.AddColumn("class", "char(13)")
+	midf.AddColumnT("class", COLUMNTYPE_CHAR, 20)
 
 	m := NewMiData()
-	m.Add("feaid", "1")
-	m.Add("age", 10)
-	m.Add("name", "shabi")
-	m.Add("class", 1.1)
+	m.SetValue("feaid", "1")
+	m.SetValue("age", 10)
+	m.SetValue("name", "shabi")
+	m.SetValue("class", 1.1)
 	m.Geometry = NewMiPoint(112.123, 54.232)
 	midf.AddData(m)
 
 	m = NewMiData()
-	m.Add("feaid", "2")
-	m.Add("age", 15)
-	m.Add("name", "zhongwei")
-	m.Add("class", 1.12312)
+	m.SetValue("feaid", "2")
+	m.SetValue("age", 15)
+	m.SetValue("name", "zhongwei")
+	m.SetValue("class", 1.12312)
 	midf.AddData(m)
 
 	m = NewMiData()
-	m.Add("feaid", "2")
-	m.Add("age", 15)
-	m.Add("name", "zhongwei")
-	m.Add("class", 1.12312)
+	m.SetValue("feaid", "2")
+	m.SetValue("age", 15)
+	m.SetValue("name", "zhongwei")
+	m.SetValue("class", 1.12312)
 	m.Geometry = NewMiLine(112.123, 54.232, 112.123, 54.232)
 	midf.AddData(m)
 
 	m = NewMiData()
-	m.Add("feaid", "2")
-	m.Add("age", 15)
-	m.Add("name", "zhongwei")
-	m.Add("class", 1.12312)
+	m.SetValue("feaid", "2")
+	m.SetValue("age", 15)
+	m.SetValue("name", "zhongwei")
+	m.SetValue("class", 1.12312)
 	line := NewMiPolyline([]MiPoint{
 		NewMiPoint(112.123, 54.232),
 		NewMiPoint(112.123, 54.232),
 		NewMiPoint(112.123, 54.232),
 		NewMiPoint(112.123, 54.232),
 	})
-	// line.Sections = append(line.Sections, []MiPoint{
-	// 	NewMiPoint(112.123, 54.232),
-	// 	NewMiPoint(112.123, 54.232),
-	// 	NewMiPoint(112.123, 54.232),
-	// 	NewMiPoint(112.123, 54.232),
-	// })
+
 	m.Geometry = line
 	m.Graphic = MiPen{false, 1, 2, 0}
 	midf.AddData(m)
@@ -111,5 +107,24 @@ func TestOmmm(t *testing.T) {
 	f := func(c rune) bool {
 		return !unicode.IsLetter(c) && !unicode.IsNumber(c) && c != '.'
 	}
-	fmt.Printf("Fields are: %q", strings.FieldsFunc("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", f))
+	polygon := "  POLYGON ((35 10, 45 45, 15 40, 10 20, 35 10),(20 30, 35 35, 30 20, 20 30))"
+	fmt.Println("-----------------")
+	re1 := strings.Split(polygon, "),(")
+	fmt.Println(re1)
+	re2 := strings.Split(polygon, "((")
+	fmt.Println(re2)
+	fmt.Println("-----------------")
+	polygon = strings.Trim(polygon, " ")
+	fmt.Println(strings.HasPrefix(polygon, "POLYGON"))
+	fmt.Println("-----------------")
+
+	index := strings.Index(polygon, "),(")
+	first := polygon[:index]
+	fmt.Println(index)
+	fmt.Println(first)
+	fmt.Println(polygon[index+3:])
+	outter := strings.FieldsFunc(polygon[:index], f)
+	innner := strings.FieldsFunc(polygon[index+3:], f)
+	fmt.Println(outter, "\n", innner)
+	fmt.Printf("Fields are: %q", strings.FieldsFunc("POLYGON ((35 10, 45 45, 15 40, 10 20, 35 10),(20 30, 35 35, 30 20, 20 30))", f))
 }

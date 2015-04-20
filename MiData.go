@@ -16,7 +16,7 @@ func NewMiData() *MiData {
 	return data
 }
 
-func (m *MiData) Add(fname string, fvalue interface{}) {
+func (m *MiData) SetValue(fname string, fvalue interface{}) {
 	m.Row[fname] = fvalue
 }
 

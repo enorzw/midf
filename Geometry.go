@@ -13,38 +13,48 @@ func ReadWkt(wkt string) (IMiGeometry, error) {
 	coodFilter := func(c rune) bool {
 		return !unicode.IsLetter(c) && !unicode.IsNumber(c) && c != '.'
 	}
-	fields := strings.FieldsFunc(wkt, coodFilter)
-	if strings.EqualFold(fields[0], "POINT") {
+	if strings.HasPrefix(wkt, "POINT") {
+		fields := strings.FieldsFunc(wkt, coodFilter)
 		var x, y float64
 		var err error
 		x, err = strconv.ParseFloat(fields[1], 64)
 		if err != nil {
-			return EmptyGeometry{}, errors.New("WKT格式解析失败：" + wkt)
+			return EmptyGeometry{}, errors.New("WKT格式解析失败：" + STR_NEWLINE + wkt + STR_NEWLINE)
 		}
 		y, err = strconv.ParseFloat(fields[2], 64)
 		if err != nil {
-			return EmptyGeometry{}, errors.New("WKT格式解析失败：" + wkt)
+			return EmptyGeometry{}, errors.New("WKT格式解析失败：" + STR_NEWLINE + wkt + STR_NEWLINE)
 		}
 		return NewMiPoint(x, y), nil
-	} else if strings.EqualFold(fields[0], "LINESTRING") {
+	} else if strings.HasPrefix(wkt, "LINESTRING") {
+		fields := strings.FieldsFunc(wkt, coodFilter)
 		var x, y float64
 		var err error
 		var points []MiPoint = make([]MiPoint, 0, 10)
 		for i := 1; i < len(fields); i += 2 {
 			x, err = strconv.ParseFloat(fields[i], 64)
 			if err != nil {
-				return EmptyGeometry{}, errors.New("WKT格式解析失败：" + wkt)
+				return EmptyGeometry{}, errors.New("WKT格式解析失败：" + STR_NEWLINE + wkt + STR_NEWLINE)
 			}
 			y, err = strconv.ParseFloat(fields[i+1], 64)
 			if err != nil {
-				return EmptyGeometry{}, errors.New("WKT格式解析失败：" + wkt)
+				return EmptyGeometry{}, errors.New("WKT格式解析失败：" + STR_NEWLINE + wkt + STR_NEWLINE)
 			}
 			points = append(points, NewMiPoint(x, y))
 		}
 		return NewMiPolyline(points), nil
-	} else if strings.EqualFold(fields[0], "POLYGON") {
+	} else if strings.HasPrefix(wkt, "POLYGON") {
+
+	} else if strings.HasPrefix(wkt, "MULTIPOINT ") {
+
+	} else if strings.HasPrefix(wkt, "MULTILINESTRING ") {
+
+	} else if strings.HasPrefix(wkt, "MULTIPOLYGON ") {
+
+	} else if strings.HasPrefix(wkt, "GEOMETRYCOLLECTION") {
 
 	}
+
 	return EmptyGeometry{}, nil
 }
 

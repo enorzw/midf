@@ -12,6 +12,14 @@ type MidMif struct {
 	Datas []*MiData
 }
 
+func (m *MidMif) AddColumnT(cname string, ctype ColunmType, cnum int) bool {
+	return m.Mif.Head.AddColumnT(cname, ctype, cnum)
+}
+
+func (m *MidMif) AddColumn(cname string, ctype string) bool {
+	return m.Mif.Head.AddColumn(cname, ctype)
+}
+
 func (m *MidMif) AddData(data *MiData) {
 	m.Datas = append(m.Datas, data)
 }
